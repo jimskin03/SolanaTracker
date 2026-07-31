@@ -4,7 +4,9 @@ A minimal **static** web app: paste a Solana wallet address, see its **SOL balan
 
 Solana Wallet API: Helius free TIER
 Hosting: infinityfree free TIER
+
 -Visual Studio Code 
+
  -Zoo Code
 
 Made by Grok 4.5
