@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Check Solana wallet SOL balance instantly. Free static tracker for GitHub Pages.">
+  <meta name="theme-color" content="#0b0f19">
+  <title>Solana Wallet Balance Tracker</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="bg-grid" aria-hidden="true"></div>
+  <div class="bg-glow" aria-hidden="true"></div>
+
+  <div class="app">
+    <header class="header">
+      <div class="logo" aria-hidden="true">
+        <svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect width="36" height="36" rx="10" fill="url(#g)"/>
+          <path d="M10.5 22.5c.3-.3.7-.5 1.1-.5h13.2c.7 0 1 .8.6 1.3l-2.1 2.5c-.3.3-.7.5-1.1.5H8.9c-.7 0-1-.8-.6-1.3l2.2-2.5z" fill="#fff"/>
+          <path d="M10.5 10.2c.3-.3.7-.5 1.1-.5h13.2c.7 0 1 .8.6 1.3l-2.1 2.5c-.3.3-.7.5-1.1.5H8.9c-.7 0-1-.8-.6-1.3l2.2-2.5z" fill="#fff"/>
+          <path d="M25.5 16.3c-.3.3-.7.5-1.1.5H11.2c-.7 0-1-.8-.6-1.3l2.1-2.5c.3-.3.7-.5 1.1-.5h13.3c.7 0 1 .8.6 1.3l-2.2 2.5z" fill="#fff"/>
+          <defs>
+            <linearGradient id="g" x1="0" y1="0" x2="36" y2="36" gradientUnits="userSpaceOnUse">
+              <stop stop-color="#9945FF"/>
+              <stop offset="1" stop-color="#14F195"/>
+            </linearGradient>
+          </defs>
+        </svg>
+      </div>
+      <div class="header-text">
+        <h1>Solana Balance Tracker</h1>
+        <p class="subtitle">Look up any wallet’s SOL balance on mainnet</p>
+      </div>
+    </header>
+
+    <main class="card">
+      <form id="balance-form" class="form" novalidate>
+        <label for="wallet-address" class="label">Wallet address</label>
+        <div class="input-row">
+          <input
+            type="text"
+            id="wallet-address"
+            name="wallet"
+            class="input"
+            placeholder="e.g. 7xKXtg2CW87d97TXJSDpbD5jBkheTqA83TZRuJosgAsU"
+            autocomplete="off"
+            spellcheck="false"
+            inputmode="text"
+            maxlength="64"
+            required
+            aria-describedby="address-hint"
+          >
+          <button type="submit" id="check-btn" class="btn btn-primary">
+            <span class="btn-label">Check</span>
+            <span class="btn-spinner hidden" aria-hidden="true"></span>
+          </button>
+        </div>
+        <p id="address-hint" class="hint">Base58 public key · mainnet-beta</p>
+      </form>
+
+      <div id="status" class="status hidden" role="status" aria-live="polite"></div>
+
+      <section id="result" class="result hidden" aria-live="polite">
+        <div class="balance-block">
+          <p class="balance-label">Balance</p>
+          <p class="balance-sol">
+            <span id="balance-amount">—</span>
+            <span class="unit">SOL</span>
+          </p>
+          <p id="balance-usd" class="balance-usd">—</p>
+        </div>
+
+        <dl class="meta">
+          <div class="meta-row">
+            <dt>Address</dt>
+            <dd>
+              <code id="display-address" class="mono"></code>
+              <button type="button" id="copy-btn" class="btn-icon" title="Copy address" aria-label="Copy address">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                  <rect x="9" y="9" width="13" height="13" rx="2"/>
+                  <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                </svg>
+              </button>
+            </dd>
+          </div>
+          <div class="meta-row">
+            <dt>Lamports</dt>
+            <dd id="lamports" class="mono">—</dd>
+          </div>
+          <div class="meta-row">
+            <dt>Network</dt>
+            <dd id="network-label">mainnet-beta</dd>
+          </div>
+          <div class="meta-row">
+            <dt>Explorer</dt>
+            <dd>
+              <a id="explorer-link" class="link" href="#" target="_blank" rel="noopener noreferrer">Open in Solscan ↗</a>
+            </dd>
+          </div>
+        </dl>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <p>
+        Solana JSON-RPC <code class="mono">getBalance</code> ·
+        <a class="link" href="https://docs.solana.com/api/http#getbalance" target="_blank" rel="noopener noreferrer">docs</a>
+      </p>
+      <p class="fineprint">
+        Configure <code class="mono">RPC_URL</code> in <code class="mono">app.js</code>
+        (Helius recommended for testing). API keys in client JS are publicly visible —
+        use a server proxy for production.
+      </p>
+    </footer>
+  </div>
+
+  <script src="app.js" defer></script>
+</body>
+</html>
