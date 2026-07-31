@@ -7,6 +7,9 @@ Built to run on **GitHub Pages** with no build step and no backend.
 ![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)
 ![Static](https://img.shields.io/badge/hosting-GitHub%20Pages-2088FF?logo=github)
 
+WEBSITE IS LIVE NOW AT 
+https://solana.free.je/
+
 ## Features
 
 - Wallet address input with base58 / 32-byte validation
@@ -16,6 +19,8 @@ Built to run on **GitHub Pages** with no build step and no backend.
 - Link to Solscan + copy address
 - Shareable URLs: `?address=<pubkey>`
 - Responsive dark UI, no frameworks, no bundler
+
+THIS IS BUILT FOR TESTING AND EDUCATIONAL PURPOSES. API IS NOT HIDDEN. USING HELIUS FREE TIER
 
 ## Live demo
 
