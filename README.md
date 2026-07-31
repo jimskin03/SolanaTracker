@@ -10,6 +10,8 @@ Built to run on **GitHub Pages** with no build step and no backend.
 WEBSITE IS LIVE NOW AT 
 https://solana.free.je/
 
+Visit the live site: [https://solana.free.je/](https://solana.free.je/)
+
 ## Features
 
 - Wallet address input with base58 / 32-byte validation
