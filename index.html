@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solana Balance Tracker</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Solana Balance Tracker</h1>
+        <p class="subtitle">Enter a wallet address to check its SOL balance</p>
+
+        <div class="input-group">
+            <input
+                type="text"
+                id="walletAddress"
+                placeholder="Enter Solana wallet address..."
+                autocomplete="off"
+                spellcheck="false"
+            >
+            <button id="checkBalance" type="button">Check Balance</button>
+        </div>
+
+        <div id="balanceDisplay" class="balance-display">
+            Balance: <span id="balanceAmount">—</span> SOL
+        </div>
+
+        <div id="errorMessage" class="error-message" hidden></div>
+
+        <p class="hint">
+            Run with <code>python server.py</code> then open
+            <a href="http://127.0.0.1:5500" target="_blank" rel="noopener">http://127.0.0.1:5500</a>
+        </p>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
