@@ -28,9 +28,34 @@
 
         <div id="errorMessage" class="error-message" hidden></div>
 
-        <p class="hint">
-            Run with <code>python server.py</code> then open
-            <a href="http://127.0.0.1:5500" target="_blank" rel="noopener">http://127.0.0.1:5500</a>
+      <p class="hint" id="hint">
+  <span id="hintText"></span>
+  <a id="hintLink" href="#" target="_blank" rel="noopener"></a>
+</p>
+
+<script>
+  (function () {
+    const hintText = document.getElementById('hintText');
+    const hintLink = document.getElementById('hintLink');
+
+    // If opened from file://, origin may be "null" — show local-server instructions.
+    if (location.protocol === 'file:' || location.origin === 'null') {
+      hintText.textContent = 'Running locally: start a simple static server (e.g. ';
+      hintLink.href = 'http://127.0.0.1:5500';
+      hintLink.textContent = 'http://127.0.0.1:5500';
+      // append closing text after the link
+      const closing = document.createTextNode(') then open it in your browser.');
+      hintLink.parentNode.appendChild(closing);
+    } else {
+      // Hosted — show the app URL based on current origin
+      hintText.textContent = 'This app is hosted at ';
+      hintLink.href = location.origin;
+      hintLink.textContent = location.origin;
+      const closing = document.createTextNode(' — open that URL in your browser.');
+      hintLink.parentNode.appendChild(closing);
+    }
+  })();
+</script>
         </p>
     </div>
     <script src="script.js"></script>
