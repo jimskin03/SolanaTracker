@@ -2,6 +2,13 @@
 
 A minimal **static** web app: paste a Solana wallet address, see its **SOL balance** (and an approximate USD value).
 
+Solana Wallet API: Helius free TIER
+Hosting: infinityfree free TIER
+-Visual Studio Code 
+ -Zoo Code
+
+Made by Grok 4.5
+
 Built to run on **GitHub Pages** with no build step and no backend.
 
 ![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)
