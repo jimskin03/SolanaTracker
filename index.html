@@ -1,609 +1,123 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Solana Wallet Tracker</title>
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
-      min-height: 100vh;
-      color: #e0e0e0;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 20px;
-    }
-
-    .app-container {
-      width: 100%;
-      max-width: 500px;
-    }
-
-    .app-card {
-      background: rgba(255, 255, 255, 0.05);
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 20px;
-      padding: 40px;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-    }
-
-    .app-header {
-      text-align: center;
-      margin-bottom: 30px;
-    }
-
-    .solana-logo {
-      font-size: 48px;
-      color: #9945ff;
-      margin-bottom: 10px;
-    }
-
-    .app-header h1 {
-      font-size: 1.8rem;
-      background: linear-gradient(90deg, #9945ff, #14f195);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      margin-bottom: 8px;
-    }
-
-    .subtitle {
-      color: #888;
-      font-size: 0.95rem;
-    }
-
-    .help-text {
-      margin-top: 12px;
-      color: #8a8a8a;
-      font-size: 0.8rem;
-      line-height: 1.45;
-    }
-
-    /* Network Selector */
-    .network-selector {
-      margin-bottom: 20px;
-    }
-
-    .network-label {
-      display: block;
-      font-size: 0.85rem;
-      color: #888;
-      margin-bottom: 8px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    .network-options {
-      display: flex;
-      gap: 8px;
-    }
-
-    .network-btn {
-      flex: 1;
-      padding: 10px 14px;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 10px;
-      background: rgba(255, 255, 255, 0.03);
-      color: #aaa;
-      font-size: 0.85rem;
-      font-weight: 500;
-      cursor: pointer;
-      transition: all 0.2s;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-    }
-
-    .network-btn:hover {
-      background: rgba(255, 255, 255, 0.08);
-      border-color: rgba(255, 255, 255, 0.2);
-    }
-
-    .network-btn.active {
-      background: rgba(255, 255, 255, 0.1);
-      color: #fff;
-      box-shadow: 0 0 12px rgba(153, 69, 255, 0.15);
-    }
-
-    .network-btn.active[data-network="mainnet-beta"] {
-      border-color: #14f195;
-    }
-
-    .network-btn.active[data-network="devnet"] {
-      border-color: #9945ff;
-    }
-
-    .network-btn.active[data-network="testnet"] {
-      border-color: #ffa726;
-    }
-
-    .network-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: #555;
-      transition: background 0.2s, box-shadow 0.2s;
-    }
-
-    .network-btn.active[data-network="mainnet-beta"] .network-dot {
-      background: #14f195;
-      box-shadow: 0 0 6px #14f195;
-    }
-
-    .network-btn.active[data-network="devnet"] .network-dot {
-      background: #9945ff;
-      box-shadow: 0 0 6px #9945ff;
-    }
-
-    .network-btn.active[data-network="testnet"] .network-dot {
-      background: #ffa726;
-      box-shadow: 0 0 6px #ffa726;
-    }
-
-    /* Wallet Input */
-    .wallet-input-form {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-
-    .wallet-input {
-      width: 100%;
-      padding: 14px 18px;
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      border-radius: 12px;
-      background: rgba(255, 255, 255, 0.05);
-      color: #e0e0e0;
-      font-size: 0.9rem;
-      outline: none;
-      transition: border-color 0.3s, box-shadow 0.3s;
-    }
-
-    .wallet-input:focus {
-      border-color: #9945ff;
-      box-shadow: 0 0 0 3px rgba(153, 69, 255, 0.15);
-    }
-
-    .wallet-input::placeholder {
-      color: #666;
-    }
-
-    .wallet-input:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-    }
-
-    .check-btn {
-      padding: 14px 24px;
-      border: none;
-      border-radius: 12px;
-      background: linear-gradient(135deg, #9945ff, #14f195);
-      color: #fff;
-      font-size: 1rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: transform 0.2s, opacity 0.2s, box-shadow 0.2s;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 48px;
-    }
-
-    .check-btn:hover:not(:disabled) {
-      transform: translateY(-1px);
-      box-shadow: 0 6px 20px rgba(153, 69, 255, 0.4);
-    }
-
-    .check-btn:active:not(:disabled) {
-      transform: translateY(0);
-    }
-
-    .check-btn:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
-
-    .spinner {
-      width: 20px;
-      height: 20px;
-      border: 2px solid rgba(255, 255, 255, 0.3);
-      border-top-color: #fff;
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
-    }
-
-    @keyframes spin {
-      to {
-        transform: rotate(360deg);
-      }
-    }
-
-    /* Error Message */
-    .error-message {
-      background: rgba(255, 59, 48, 0.1);
-      border: 1px solid rgba(255, 59, 48, 0.3);
-      border-radius: 10px;
-      padding: 12px 16px;
-      margin-top: 16px;
-      color: #ff6b6b;
-      font-size: 0.9rem;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .error-message.hidden {
-      display: none;
-    }
-
-    /* Balance Display */
-    .balance-display {
-      margin-top: 24px;
-      padding: 24px;
-      background: rgba(20, 241, 149, 0.05);
-      border: 1px solid rgba(20, 241, 149, 0.2);
-      border-radius: 14px;
-      text-align: center;
-    }
-
-    .balance-display.hidden {
-      display: none;
-    }
-
-    .balance-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 12px;
-    }
-
-    .balance-label {
-      font-size: 0.85rem;
-      color: #888;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    .balance-network {
-      font-size: 0.75rem;
-      color: #14f195;
-      background: rgba(20, 241, 149, 0.1);
-      padding: 4px 10px;
-      border-radius: 20px;
-      font-weight: 500;
-    }
-
-    .balance-amount {
-      display: flex;
-      align-items: baseline;
-      justify-content: center;
-      gap: 8px;
-      margin-bottom: 12px;
-    }
-
-    .balance-value {
-      font-size: 2.5rem;
-      font-weight: 700;
-      background: linear-gradient(90deg, #14f195, #9945ff);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-
-    .balance-symbol {
-      font-size: 1.1rem;
-      color: #888;
-      font-weight: 500;
-    }
-
-    .balance-address {
-      font-size: 0.8rem;
-      color: #666;
-      font-family: 'Courier New', monospace;
-      padding: 6px 12px;
-      background: rgba(255, 255, 255, 0.03);
-      border-radius: 6px;
-      display: inline-block;
-    }
-
-    /* Responsive */
-    @media (max-width: 480px) {
-      .app-card {
-        padding: 24px;
-      }
-
-      .app-header h1 {
-        font-size: 1.4rem;
-      }
-
-      .balance-value {
-        font-size: 2rem;
-      }
-
-      .network-options {
-        flex-direction: column;
-      }
-    }
-  </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Check Solana wallet SOL balance instantly. Free static tracker for GitHub Pages.">
+  <meta name="theme-color" content="#0b0f19">
+  <title>Solana Wallet Balance Tracker</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 </head>
 <body>
-  <div class="app-container">
-    <div class="app-card">
-      <div class="app-header">
-        <div class="solana-logo">◎</div>
-        <h1>Solana Wallet Tracker</h1>
-        <p class="subtitle">Check any wallet's SOL balance</p>
-      </div>
+  <div class="bg-grid" aria-hidden="true"></div>
+  <div class="bg-glow" aria-hidden="true"></div>
 
-      <!-- Network Selector -->
-      <div class="network-selector">
-        <label class="network-label">Network</label>
-        <div class="network-options">
-          <button class="network-btn active" data-network="mainnet-beta" onclick="selectNetwork('mainnet-beta')">
-            <span class="network-dot"></span>
-            Mainnet
-          </button>
-          <button class="network-btn" data-network="devnet" onclick="selectNetwork('devnet')">
-            <span class="network-dot"></span>
-            Devnet
-          </button>
-          <button class="network-btn" data-network="testnet" onclick="selectNetwork('testnet')">
-            <span class="network-dot"></span>
-            Testnet
+  <div class="app">
+    <header class="header">
+      <div class="logo" aria-hidden="true">
+        <svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect width="36" height="36" rx="10" fill="url(#g)"/>
+          <path d="M10.5 22.5c.3-.3.7-.5 1.1-.5h13.2c.7 0 1 .8.6 1.3l-2.1 2.5c-.3.3-.7.5-1.1.5H8.9c-.7 0-1-.8-.6-1.3l2.2-2.5z" fill="#fff"/>
+          <path d="M10.5 10.2c.3-.3.7-.5 1.1-.5h13.2c.7 0 1 .8.6 1.3l-2.1 2.5c-.3.3-.7.5-1.1.5H8.9c-.7 0-1-.8-.6-1.3l2.2-2.5z" fill="#fff"/>
+          <path d="M25.5 16.3c-.3.3-.7.5-1.1.5H11.2c-.7 0-1-.8-.6-1.3l2.1-2.5c.3-.3.7-.5 1.1-.5h13.3c.7 0 1 .8.6 1.3l-2.2 2.5z" fill="#fff"/>
+          <defs>
+            <linearGradient id="g" x1="0" y1="0" x2="36" y2="36" gradientUnits="userSpaceOnUse">
+              <stop stop-color="#9945FF"/>
+              <stop offset="1" stop-color="#14F195"/>
+            </linearGradient>
+          </defs>
+        </svg>
+      </div>
+      <div class="header-text">
+        <h1>Solana Balance Tracker</h1>
+        <p class="subtitle">Look up any wallet’s SOL balance on mainnet</p>
+      </div>
+    </header>
+
+    <main class="card">
+      <form id="balance-form" class="form" novalidate>
+        <label for="wallet-address" class="label">Wallet address</label>
+        <div class="input-row">
+          <input
+            type="text"
+            id="wallet-address"
+            name="wallet"
+            class="input"
+            placeholder="e.g. 7xKXtg2CW87d97TXJSDpbD5jBkheTqA83TZRuJosgAsU"
+            autocomplete="off"
+            spellcheck="false"
+            inputmode="text"
+            maxlength="64"
+            required
+            aria-describedby="address-hint"
+          >
+          <button type="submit" id="check-btn" class="btn btn-primary">
+            <span class="btn-label">Check</span>
+            <span class="btn-spinner hidden" aria-hidden="true"></span>
           </button>
         </div>
-      </div>
-
-      <!-- Wallet Input Form -->
-      <form class="wallet-input-form" onsubmit="handleSubmit(event)">
-        <input
-          type="text"
-          id="walletInput"
-          class="wallet-input"
-          placeholder="Enter Solana wallet address..."
-        />
-        <button type="submit" id="checkBtn" class="check-btn">
-          Check Balance
-        </button>
-        <p class="help-text">
-          GitHub Pages is static, so browser requests may need a CORS-enabled RPC endpoint.
-          You can add <strong>?rpc=https://your-rpc-url&apiKey=your-key</strong> to the URL if needed.
-        </p>
+        <p id="address-hint" class="hint">Base58 public key · mainnet-beta</p>
       </form>
 
-      <!-- Error Message -->
-      <div id="errorMessage" class="error-message hidden">
-        <span>⚠️</span>
-        <span id="errorText"></span>
-      </div>
+      <div id="status" class="status hidden" role="status" aria-live="polite"></div>
 
-      <!-- Balance Display -->
-      <div id="balanceDisplay" class="balance-display hidden">
-        <div class="balance-header">
-          <span class="balance-label">SOL Balance</span>
-          <span id="balanceNetwork" class="balance-network">Mainnet</span>
+      <section id="result" class="result hidden" aria-live="polite">
+        <div class="balance-block">
+          <p class="balance-label">Balance</p>
+          <p class="balance-sol">
+            <span id="balance-amount">—</span>
+            <span class="unit">SOL</span>
+          </p>
+          <p id="balance-usd" class="balance-usd">—</p>
         </div>
-        <div class="balance-amount">
-          <span id="balanceValue" class="balance-value">0.0000</span>
-          <span class="balance-symbol">SOL</span>
-        </div>
-        <div id="balanceAddress" class="balance-address"></div>
-      </div>
-    </div>
+
+        <dl class="meta">
+          <div class="meta-row">
+            <dt>Address</dt>
+            <dd>
+              <code id="display-address" class="mono"></code>
+              <button type="button" id="copy-btn" class="btn-icon" title="Copy address" aria-label="Copy address">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                  <rect x="9" y="9" width="13" height="13" rx="2"/>
+                  <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                </svg>
+              </button>
+            </dd>
+          </div>
+          <div class="meta-row">
+            <dt>Lamports</dt>
+            <dd id="lamports" class="mono">—</dd>
+          </div>
+          <div class="meta-row">
+            <dt>Network</dt>
+            <dd id="network-label">mainnet-beta</dd>
+          </div>
+          <div class="meta-row">
+            <dt>Explorer</dt>
+            <dd>
+              <a id="explorer-link" class="link" href="#" target="_blank" rel="noopener noreferrer">Open in Solscan ↗</a>
+            </dd>
+          </div>
+        </dl>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <p>
+        Uses public Solana JSON-RPC ·
+        <a class="link" href="https://docs.solana.com/api/http#getbalance" target="_blank" rel="noopener noreferrer">getBalance</a>
+      </p>
+      <p class="fineprint">
+        Public RPCs are rate-limited and not for production. For heavy use, point
+        <code class="mono">RPC_URL</code> in <code class="mono">app.js</code> at your own provider
+        (Helius, QuickNode, Alchemy, etc.).
+      </p>
+    </footer>
   </div>
 
-  <script>
-    // ============ State ============
-    let selectedNetwork = 'mainnet-beta';
-    let isLoading = false;
-
-    // ============ RPC Endpoints ============
-    const RPC_ENDPOINTS = {
-      'mainnet-beta': {
-        label: 'Mainnet',
-        url: 'https://api.mainnet-beta.solana.com',
-      },
-      'devnet': {
-        label: 'Devnet',
-        url: 'https://api.devnet.solana.com',
-      },
-      'testnet': {
-        label: 'Testnet',
-        url: 'https://api.testnet.solana.com',
-      },
-    };
-
-    const NETWORK_LABELS = {
-      'mainnet-beta': 'Mainnet',
-      'devnet': 'Devnet',
-      'testnet': 'Testnet',
-    };
-
-    const LAMPORTS_PER_SOL = 1000000000;
-
-    // ============ DOM Elements ============
-    const walletInput = document.getElementById('walletInput');
-    const checkBtn = document.getElementById('checkBtn');
-    const errorMessage = document.getElementById('errorMessage');
-    const errorText = document.getElementById('errorText');
-    const balanceDisplay = document.getElementById('balanceDisplay');
-    const balanceValue = document.getElementById('balanceValue');
-    const balanceNetwork = document.getElementById('balanceNetwork');
-    const balanceAddress = document.getElementById('balanceAddress');
-
-    // ============ Network Selection ============
-    function selectNetwork(network) {
-      selectedNetwork = network;
-
-      document.querySelectorAll('.network-btn').forEach(btn => {
-        btn.classList.remove('active');
-      });
-      document.querySelector(`[data-network="${network}"]`).classList.add('active');
-    }
-
-    // ============ Address Validation ============
-    function isValidSolanaAddress(address) {
-      const base58Regex = /^[1-9A-HJ-NP-Za-km-z]{32,44}$/;
-      return base58Regex.test(address);
-    }
-
-    // ============ Format Address ============
-    function formatAddress(addr) {
-      if (addr.length > 12) {
-        return addr.slice(0, 6) + '...' + addr.slice(-6);
-      }
-      return addr;
-    }
-
-    // ============ Show/Hide UI Elements ============
-    function showError(message) {
-      errorText.textContent = message;
-      errorMessage.classList.remove('hidden');
-      balanceDisplay.classList.add('hidden');
-    }
-
-    function hideError() {
-      errorMessage.classList.add('hidden');
-    }
-
-    function showBalance(balance, address, network) {
-      balanceValue.textContent = balance.toFixed(4);
-      balanceNetwork.textContent = NETWORK_LABELS[network];
-      balanceAddress.textContent = formatAddress(address);
-      balanceAddress.title = address;
-      balanceDisplay.classList.remove('hidden');
-    }
-
-    function setLoading(loading) {
-      isLoading = loading;
-      walletInput.disabled = loading;
-      checkBtn.disabled = loading;
-
-      if (loading) {
-        checkBtn.innerHTML = '<span class="spinner"></span>';
-      } else {
-        checkBtn.textContent = 'Check Balance';
-      }
-    }
-
-    function getQueryValue(key) {
-      const params = new URLSearchParams(window.location.search);
-      return params.get(key) || '';
-    }
-
-    function getRpcCandidates(network) {
-      const customRpcUrl = getQueryValue('rpc') || localStorage.getItem('rpc-url') || '';
-      const apiKey = getQueryValue('apiKey') || localStorage.getItem('rpc-api-key') || '';
-      const endpoint = RPC_ENDPOINTS[network].url;
-      const candidates = [];
-
-      const addCandidate = (value) => {
-        if (!value) return;
-        const url = new URL(value, window.location.href);
-        if (apiKey && !url.searchParams.has('api-key')) {
-          url.searchParams.set('api-key', apiKey);
-        }
-        candidates.push(url.toString());
-      };
-
-      addCandidate(customRpcUrl);
-      addCandidate(endpoint);
-
-      if (endpoint && endpoint.includes('api.mainnet-beta.solana.com')) {
-        addCandidate(`https://corsproxy.io/?${encodeURIComponent(endpoint)}`);
-      }
-
-      return candidates;
-    }
-
-    // ============ Fetch Balance via JSON-RPC ============
-    async function fetchBalance(address, network) {
-      const candidates = getRpcCandidates(network);
-      let lastError = new Error('No RPC endpoint available.');
-
-      for (const endpoint of candidates) {
-        try {
-          const response = await fetch(endpoint, {
-            method: 'POST',
-            headers: {
-              'Accept': 'application/json',
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              jsonrpc: '2.0',
-              id: 1,
-              method: 'getBalance',
-              params: [address],
-            }),
-          });
-
-          const text = await response.text();
-          let data;
-          try {
-            data = JSON.parse(text);
-          } catch (parseError) {
-            throw new Error('The RPC endpoint returned an unexpected response. Use a CORS-enabled RPC URL or add ?rpc=https://your-rpc-url to the page URL.');
-          }
-
-          if (!response.ok) {
-            throw new Error(data.error?.message || `HTTP error: ${response.status}`);
-          }
-
-          if (data.error) {
-            throw new Error(data.error.message || 'RPC error occurred');
-          }
-
-          return data.result.value / LAMPORTS_PER_SOL;
-        } catch (err) {
-          lastError = err;
-        }
-      }
-
-      throw lastError;
-    }
-
-    // ============ Form Submit Handler ============
-    async function handleSubmit(event) {
-      event.preventDefault();
-
-      const address = walletInput.value.trim();
-
-      if (!address) {
-        showError('Please enter a wallet address.');
-        return;
-      }
-
-      if (!isValidSolanaAddress(address)) {
-        showError('Invalid wallet address. Please enter a valid Solana address (base58 encoded, 32-44 characters).');
-        return;
-      }
-
-      hideError();
-      setLoading(true);
-
-      try {
-        const balance = await fetchBalance(address, selectedNetwork);
-        showBalance(balance, address, selectedNetwork);
-      } catch (err) {
-        if (err.message.includes('Failed to fetch') || err.message.includes('NetworkError')) {
-          showError('GitHub Pages cannot reach the RPC endpoint directly from the browser. Use a CORS-enabled RPC URL or add ?rpc=https://your-rpc-url&apiKey=your-key to the page URL.');
-        } else {
-          showError('Failed to fetch balance: ' + err.message);
-        }
-      } finally {
-        setLoading(false);
-      }
-    }
-  </script>
+  <script src="app.js" defer></script>
 </body>
 </html>
